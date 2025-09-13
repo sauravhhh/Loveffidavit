@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relationship Agreement</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #f8f8f8;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            font-family: 'Crimson Text', serif;
+        }
+        
+        .affidavit-container {
+            background-color: #fefefe;
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.8) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.8) 1px, transparent 1px);
+            background-size: 20px 20px;
+            background-position: -1px -1px;
+        }
+        
+        .affidavit-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="white" fill-opacity="0.5"/><circle cx="20" cy="20" r="2" fill="rgba(0,0,0,0.02)"/><circle cx="80" cy="20" r="2" fill="rgba(0,0,0,0.02)"/><circle cx="20" cy="80" r="2" fill="rgba(0,0,0,0.02)"/><circle cx="80" cy="80" r="2" fill="rgba(0,0,0,0.02)"/></svg>');
+            opacity: 0.3;
+            z-index: 0;
+        }
+        
+        .content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .affidavit-header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 15px;
+        }
+        
+        .court-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+        
+        .case-number {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        
+        .parties {
+            margin: 25px 0;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        
+        .party {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .party-label {
+            font-weight: 600;
+            margin-right: 10px;
+            min-width: 100px;
+        }
+        
+        .editable {
+            border: none;
+            border-bottom: 1px dashed #999;
+            background: transparent;
+            font-family: 'Crimson Text', serif;
+            font-size: 16px;
+            color: #333;
+            padding: 2px 5px;
+            outline: none;
+            flex-grow: 1;
+        }
+        
+        .editable:focus {
+            border-bottom-color: #ff6b6b;
+        }
+        
+        .date-input {
+            border: none;
+            border-bottom: 1px dashed #999;
+            background: transparent;
+            font-family: 'Crimson Text', serif;
+            font-size: 14px;
+            color: #555;
+            padding: 2px 5px;
+            outline: none;
+            font-style: italic;
+            cursor: pointer;
+        }
+        
+        .preamble {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: #333;
+            text-align: justify;
+        }
+        
+        .clause {
+            margin-bottom: 25px;
+        }
+        
+        .clause-title {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .clause-content {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
+            text-align: justify;
+        }
+        
+        .terms-list {
+            margin: 20px 0;
+            padding-left: 25px;
+        }
+        
+        .term-item {
+            margin-bottom: 15px;
+            position: relative;
+            padding-left: 15px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        
+        .term-item::before {
+            content: counter(term-counter) ".";
+            counter-increment: term-counter;
+            position: absolute;
+            left: -25px;
+            font-weight: 600;
+        }
+        
+        .terms-list {
+            counter-reset: term-counter;
+        }
+        
+        .signatures {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+        }
+        
+        .signature-box {
+            width: 45%;
+            text-align: center;
+        }
+        
+        .signature-line {
+            border-bottom: 1px solid #333;
+            height: 80px;
+            margin-bottom: 5px;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        
+        .signature-preview {
+            max-width: 100%;
+            max-height: 70px;
+            margin-bottom: 5px;
+            object-fit: contain;
+        }
+        
+        .signature-label {
+            font-size: 14px;
+            color: #555;
+            margin-top: 5px;
+        }
+        
+        .upload-btn {
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-family: 'Crimson Text', serif;
+            color: #333;
+            margin-top: 5px;
+        }
+        
+        .date-container {
+            text-align: right;
+            font-size: 14px;
+            color: #555;
+            margin-top: 30px;
+            font-style: italic;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+        
+        .date-label {
+            margin-right: 10px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #888;
+            font-size: 14px;
+            font-style: italic;
+        }
+        
+        .heart {
+            color: #ff6b6b;
+        }
+        
+        .seal {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            width: 80px;
+            height: 80px;
+            border: 2px solid rgba(255, 107, 107, 0.3);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: rgba(255, 107, 107, 0.5);
+            font-weight: bold;
+            transform: rotate(15deg);
+            opacity: 0.7;
+        }
+        
+        .download-btn {
+            display: block;
+            margin: 20px auto 0;
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-family: 'Crimson Text', serif;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .wide-container {
+            width: 800px;
+            max-width: 800px;
+        }
+        
+        @media (max-width: 600px) {
+            .affidavit-container {
+                padding: 25px;
+            }
+            
+            .court-name {
+                font-size: 20px;
+            }
+            
+            .signatures {
+                flex-direction: column;
+            }
+            
+            .signature-box {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+            
+            .seal {
+                width: 60px;
+                height: 60px;
+                top: 25px;
+                right: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="affidavit-container" id="affidavit">
+        <div class="seal">LOVE</div>
+        <div class="content">
+            <div class="affidavit-header">
+                <div class="court-name">Relationship Agreement</div>
+                <div class="case-number">Agreement No: LOVE/2023/001</div>
+            </div>
+            
+            <div class="parties">
+                <div class="party">
+                    <span class="party-label">Partner 1:</span>
+                    <input type="text" class="editable" placeholder="Your Name" value="">
+                </div>
+                <div class="party">
+                    <span class="party-label">Partner 2:</span>
+                    <input type="text" class="editable" placeholder="Partner's Name" value="">
+                </div>
+            </div>
+            
+            <p class="preamble">I, the undersigned, hereby joyfully affirm and declare as under:</p>
+            
+            <div class="clause">
+                <h2 class="clause-title">DECLARATION OF LOVE</h2>
+                <p class="clause-content">That we, the parties to this agreement, are deeply in love and committed to nurturing our relationship with care, respect, and endless affection. We promise to cherish each other through all of life's adventures.</p>
+            </div>
+            
+            <div class="clause">
+                <h2 class="clause-title">PROMISES OF CARE</h2>
+                <p class="clause-content">That in consideration of our boundless love and devotion, we joyfully promise to:</p>
+                
+                <div class="terms-list">
+                    <div class="term-item">I will adore you every single day and remind you how special you are to me.</div>
+                    <div class="term-item">I will take care of you when you're sick and when you're healthy, always putting your needs first.</div>
+                    <div class="term-item">I will support your dreams and be your biggest cheerleader in all that you do.</div>
+                    <div class="term-item">I will create a cozy home where we can build beautiful memories together.</div>
+                    <div class="term-item">I will communicate openly and honestly, always listening with an open heart.</div>
+                    <div class="term-item">I will surprise you with tokens of my love and plan adventures we can share together.</div>
+                </div>
+            </div>
+            
+            <div class="clause">
+                <h2 class="clause-title">PLEDGE OF DEVOTION</h2>
+                <p class="clause-content">That I promise to love you unconditionally, to stand by your side through thick and thin, and to choose you every single day. My heart is yours, now and forever.</p>
+            </div>
+            
+            <div class="signatures">
+                <div class="signature-box">
+                    <div class="signature-line">
+                        <img id="signature1Preview" class="signature-preview hidden" alt="Signature">
+                    </div>
+                    <div class="signature-label">Partner 1</div>
+                    <input type="file" id="signature1Upload" class="hidden" accept="image/*">
+                    <button class="upload-btn" onclick="document.getElementById('signature1Upload').click()">Upload Signature</button>
+                </div>
+                <div class="signature-box">
+                    <div class="signature-line">
+                        <img id="signature2Preview" class="signature-preview hidden" alt="Signature">
+                    </div>
+                    <div class="signature-label">Partner 2</div>
+                    <input type="file" id="signature2Upload" class="hidden" accept="image/*">
+                    <button class="upload-btn" onclick="document.getElementById('signature2Upload').click()">Upload Signature</button>
+                </div>
+            </div>
+            
+            <div class="date-container">
+                <span class="date-label">Date:</span>
+                <input type="date" class="date-input" id="agreementDate">
+            </div>
+            
+            <div class="footer">
+                Made with <span class="heart">❤️</span> by Sauravhhh
+            </div>
+        </div>
+    </div>
+    
+    <button class="download-btn" id="downloadBtn">Download as Image</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            document.getElementById('agreementDate').value = today.toISOString().split('T')[0];
+        });
+        
+        document.getElementById('signature1Upload').addEventListener('change', function(e) {
+            handleSignatureUpload(e, 'signature1Preview');
+        });
+        
+        document.getElementById('signature2Upload').addEventListener('change', function(e) {
+            handleSignatureUpload(e, 'signature2Preview');
+        });
+        
+        function handleSignatureUpload(event, previewId) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById(previewId);
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            const affidavitElement = document.getElementById('affidavit');
+            const uploadButtons = document.querySelectorAll('.upload-btn');
+            const downloadButton = document.getElementById('downloadBtn');
+            const dateInput = document.getElementById('agreementDate');
+            
+            uploadButtons.forEach(button => button.style.display = 'none');
+            downloadButton.style.display = 'none';
+            affidavitElement.classList.add('wide-container');
+            
+            if (dateInput.value) {
+                const date = new Date(dateInput.value);
+                const formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                
+                const tempDateElement = document.createElement('div');
+                tempDateElement.className = 'date-display';
+                tempDateElement.style.textAlign = 'right';
+                tempDateElement.style.fontSize = '14px';
+                tempDateElement.style.color = '#555';
+                tempDateElement.style.marginTop = '30px';
+                tempDateElement.style.fontStyle = 'italic';
+                tempDateElement.textContent = `Date: ${formattedDate}`;
+                
+                const dateContainer = document.querySelector('.date-container');
+                const originalDateContainer = dateContainer.cloneNode(true);
+                dateContainer.parentNode.replaceChild(tempDateElement, dateContainer);
+                
+                html2canvas(affidavitElement, {
+                    scale: 2,
+                    backgroundColor: '#fefefe',
+                    width: 800,
+                    height: affidavitElement.offsetHeight,
+                    useCORS: true,
+                    allowTaint: true
+                }).then(canvas => {
+                    tempDateElement.parentNode.replaceChild(originalDateContainer, tempDateElement);
+                    restoreAndDownload(canvas);
+                });
+            } else {
+                html2canvas(affidavitElement, {
+                    scale: 2,
+                    backgroundColor: '#fefefe',
+                    width: 800,
+                    height: affidavitElement.offsetHeight,
+                    useCORS: true,
+                    allowTaint: true
+                }).then(canvas => {
+                    restoreAndDownload(canvas);
+                });
+            }
+            
+            function restoreAndDownload(canvas) {
+                affidavitElement.classList.remove('wide-container');
+                uploadButtons.forEach(button => button.style.display = 'block');
+                downloadButton.style.display = 'block';
+                
+                const link = document.createElement('a');
+                link.download = 'relationship-agreement.png';
+                link.href = canvas.toDataURL('image/png');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        });
+    </script>
+</body>
+  </html>
